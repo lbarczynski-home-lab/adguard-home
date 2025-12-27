@@ -23,12 +23,29 @@ services:
             - "67:67/udp" # DHCP server (optional)
             - "68:68/tcp" # DHCP (optional)
             - "68:68/udp" # DHCP (optional)
-            - "80:80/tcp" # HTTP UI / DoH bootstrap
-            - "443:443/tcp" # HTTPS UI / DoH
-            - "443:443/udp" # HTTP/3/DoH3 (optional)
+            # - "80:80/tcp" # HTTP UI / DoH bootstrap
+            # - "443:443/tcp" # HTTPS UI / DoH
+            # - "443:443/udp" # HTTP/3/DoH3 (optional)
             - "3000:3000/tcp" # Initial setup UI
+            - "3080:3080/tcp"
+        networks:
+            - adguard
+            - proxy
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.adguard-router.rule=Host(`adguard.intranet.xbhl.online`)"
+            - "traefik.http.routers.adguard-router.entrypoints=websecure"
+            - "traefik.http.routers.adguard-router.tls=true"
+            - "traefik.http.routers.adguard-router.service=adguard"
+            - "traefik.http.services.adguard.loadbalancer.server.url=https://adguard:3000"
         restart: unless-stopped
 
 volumes:
     conf:
     work:
+
+networks:
+    adguard:
+        name: adguard-internal-network
+    proxy:
+        external: true
