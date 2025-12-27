@@ -1,0 +1,34 @@
+services:
+    adguard:
+        image: adguard/adguardhome:v0.107.71
+        container_name: adguard
+        volumes:
+            - conf:/opt/adguardhome/conf
+            - work:/opt/adguardhome/work
+        healthcheck:
+            test: >
+                /bin/sh -c '
+                if [ -f /opt/adguardhome/conf/AdGuardHome.yml ]; then
+                  nslookup -type=a google.com 127.0.0.1 || exit 1;
+                else
+                  wget --quiet --tries=1 --spider http://127.0.0.1:3000 || exit 1;
+                fi'
+            start_period: 5s
+            interval: 15s
+            timeout: 5s
+            retries: 1
+        ports:
+            - "53:53/tcp" # DNS
+            - "53:53/udp" # DNS
+            - "67:67/udp" # DHCP server (optional)
+            - "68:68/tcp" # DHCP (optional)
+            - "68:68/udp" # DHCP (optional)
+            - "80:80/tcp" # HTTP UI / DoH bootstrap
+            - "443:443/tcp" # HTTPS UI / DoH
+            - "443:443/udp" # HTTP/3/DoH3 (optional)
+            - "3000:3000/tcp" # Initial setup UI
+        restart: unless-stopped
+
+volumes:
+    conf:
+    work:
