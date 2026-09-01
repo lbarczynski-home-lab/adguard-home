@@ -29,7 +29,6 @@ services:
             - "3000:3000/tcp" # Initial setup UI
             - "3080:3080/tcp"
         networks:
-            - adguard
             - proxy
         labels:
             - "traefik.enable=true"
@@ -38,6 +37,7 @@ services:
             - "traefik.http.routers.adguard-router.tls=true"
             - "traefik.http.routers.adguard-router.service=adguard"
             - "traefik.http.services.adguard.loadbalancer.server.url=http://adguard:3080"
+            - "traefik.docker.network=proxy"
             - 'wud.watch=true'
             - 'wud.tag.include=^v\d+\.\d+\.\d+$$'
             - "wud.link.template=https://github.com/AdguardTeam/AdGuardHome/releases/tag/v$${major}.$${minor}.$${patch}"
@@ -48,7 +48,5 @@ volumes:
     work:
 
 networks:
-    adguard:
-        name: adguard-internal-network
     proxy:
         external: true
