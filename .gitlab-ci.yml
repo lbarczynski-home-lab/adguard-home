@@ -1,5 +1,5 @@
 include:
-    - component: $CI_SERVER_FQDN/home-lab/automations/docker-compose-service-deployment@v2.0.5
+    - component: $CI_SERVER_FQDN/home-lab/automations/docker-compose-service-deployment@v2.1.0
       inputs:
           vm-hostname: dns.vm.xbhl.intranet
           vm-ssh-username: $SSH_USER
